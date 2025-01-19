@@ -1,0 +1,244 @@
+// import React, { useState, useEffect, useRef } from 'react';
+// import { Layout, Avatar, Button, List, Divider, Input, Typography } from 'antd';
+// import {
+//     LikeOutlined,
+//     DislikeOutlined,
+//     ShareAltOutlined,
+//     SaveOutlined,
+//     UserOutlined,
+//     BellOutlined,
+//     CommentOutlined,
+//     FullscreenOutlined,
+// } from '@ant-design/icons';
+// import video from '../assets/video.mp4';
+// import jack from '../assets/jack.png';
+// import userProfile from '../assets/user_profile.jpg';
+// import Loader from './Loader';
+// import Recomended from './Recomended';
+
+// const { Content, Sider } = Layout;
+// const { TextArea } = Input;
+// const { Title, Paragraph } = Typography;
+
+// const PlayVideo = ({ videoId, categoryId }) => {
+//     const [comments, setComments] = useState([
+//         { user: 'Dilmurod Mamurov', text: 'Great explanation, very helpful content!', likes: 244, time: '1 day ago', liked: false, replies: [] },
+//         { user: 'Jack Sparrow', text: 'Well structured and easy to understand.', likes: 120, time: '2 days ago', liked: false, replies: [] },
+//     ]);
+//     const [newComment, setNewComment] = useState('');
+//     const [subscribed, setSubscribed] = useState(false);
+//     const [loading, setLoading] = useState(true);
+//     const [isFullscreen, setIsFullscreen] = useState(false);
+//     const iframeRef = useRef(null);
+//     const [replyText, setReplyText] = useState(''); // For managing reply text input
+//     const [visibleReplyIndex, setVisibleReplyIndex] = useState(null); // Track which comment's reply input is visible
+
+//     // Simulate loading data or video
+//     useEffect(() => {
+//         const timer = setTimeout(() => {
+//             setLoading(false); // Stop loading after 3 seconds
+//         }, 100);
+
+//         return () => clearTimeout(timer);
+//     }, []);
+
+//     const handleAddComment = () => {
+//         if (newComment.trim()) {
+//             const updatedComments = [
+//                 ...comments,
+//                 { user: 'New User', text: newComment, likes: 0, time: 'Just now', liked: false, replies: [] },
+//             ];
+//             setComments(updatedComments);
+//             setNewComment(''); // Clear input
+//         }
+//     };
+
+//     const handleLike = (index) => {
+//         const updatedComments = [...comments];
+//         if (updatedComments[index].liked) {
+//             updatedComments[index].likes -= 1;
+//         } else {
+//             updatedComments[index].likes += 1;
+//         }
+//         updatedComments[index].liked = !updatedComments[index].liked;
+//         setComments(updatedComments);
+//     };
+
+//     const handleSubscribe = () => {
+//         setSubscribed(!subscribed);
+//     };
+
+//     const toggleFullscreen = () => {
+//         if (iframeRef.current) {
+//             if (isFullscreen) {
+//                 document.exitFullscreen();
+//             } else {
+//                 iframeRef.current.requestFullscreen();
+//             }
+//             setIsFullscreen(!isFullscreen);
+//         }
+//     };
+
+//     const handleAddReply = (commentIndex) => {
+//         if (replyText.trim()) {
+//             const updatedComments = [...comments];
+//             updatedComments[commentIndex].replies.push({
+//                 user: 'New User',
+//                 text: replyText,
+//                 likes: 0,
+//                 time: 'Just now',
+//                 liked: false,
+//             });
+//             setComments(updatedComments);
+//             setReplyText(''); // Clear input after adding reply
+//             setVisibleReplyIndex(null); // Hide the reply input after submission
+//         }
+//     };
+
+//     const handleReplyClick = (commentIndex) => {
+//         setVisibleReplyIndex(commentIndex === visibleReplyIndex ? null : commentIndex); // Toggle visibility
+//     };
+
+//     if (loading) {
+//         return <Loader />; // Show the loader when loading is true
+//     }
+
+//     return (
+//         <div className='max-w-[1320px] mx-auto mt-[70px]'>
+//             <Layout style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+//                 <Content style={{ padding: '10px' }}>
+//                     <div className='flex flex-col gap-8 md:flex-row'>
+//                         <div className='flex-1'>
+//                             <div className="relative">
+//                                 <iframe
+//                                     ref={iframeRef}
+//                                     className='w-[900px] rounded-lg shadow-lg h-[500px]'
+//                                     src={`https://www.youtube.com/embed/${videoId}`}
+//                                     title="Video Player"
+//                                     frameBorder="0"
+//                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+//                                     referrerPolicy="strict-origin-when-cross-origin"
+//                                     allowFullScreen
+//                                 />
+//                                 <Button
+//                                     icon={<FullscreenOutlined />}
+//                                     onClick={toggleFullscreen}
+//                                     className="absolute z-10 top-2 right-2"
+//                                     size="large"
+//                                     shape="circle"
+//                                     style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', color: 'white' }}
+//                                 />
+//                             </div>
+//                             <Title level={4} className='mt-4'>
+//                                 Understanding React Components and State Management
+//                             </Title>
+//                             <div className='flex items-center justify-between'>
+//                                 <span className='text-gray-500'>123k views • 2 days ago</span>
+//                                 <div className='flex gap-3'>
+//                                     <Button
+//                                         icon={<LikeOutlined />}
+//                                         size="middle"
+//                                         className={`flex items-center ${comments[0].liked ? 'text-blue-500' : 'text-gray-500'}`}
+//                                         onClick={() => handleLike(0)}
+//                                     >
+//                                         {comments[0].liked ? '❤️' : '👍'} {comments[0].likes}
+//                                     </Button>
+//                                     <Button icon={<DislikeOutlined />} size="middle" />
+//                                     <Button icon={<ShareAltOutlined />} size="middle">
+//                                         Share
+//                                     </Button>
+//                                     <Button icon={<SaveOutlined />} size="middle">
+//                                         Save
+//                                     </Button>
+//                                 </div>
+//                             </div>
+//                             <Divider />
+//                             <div className='flex items-center gap-4'>
+//                                 <Avatar src={jack} size={50} />
+//                                 <div>
+//                                     <p className='font-semibold'>Dilmurod</p>
+//                                     <span className='text-gray-500'>123k subscribers</span>
+//                                 </div>
+//                                 <Button type={subscribed ? 'default' : 'primary'} icon={<BellOutlined />} onClick={handleSubscribe}>
+//                                     {subscribed ? 'Subscribed' : 'Subscribe'}
+//                                 </Button>
+//                             </div>
+//                             <Divider />
+//                             <Paragraph>
+//                                 Channel that makes learning Easy. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt molestiae voluptatibus vel, pariatur veniam, necessitatibus accusantium dolorum distinctio porro expedita.
+//                             </Paragraph>
+//                             <Divider />
+//                             <Title level={5}>{comments.length} comments</Title>
+//                             <TextArea
+//                                 rows={2}
+//                                 placeholder="Add a comment..."
+//                                 value={newComment}
+//                                 onChange={(e) => setNewComment(e.target.value)}
+//                                 className='mb-2'
+//                             />
+//                             <Button type="primary" onClick={handleAddComment}>
+//                                 Add Comment
+//                             </Button>
+//                             {comments.map((comment, commentIndex) => (
+//                                 <div key={commentIndex} className='flex gap-4 mb-5'>
+//                                     <Avatar src={userProfile} size={40} icon={<UserOutlined />} />
+//                                     <div>
+//                                         <h4 className='font-semibold'>
+//                                             {comment.user} <span className='text-sm text-gray-500'>{comment.time}</span>
+//                                         </h4>
+//                                         <p className='my-2'>{comment.text}</p>
+//                                         <div className='flex gap-4'>
+//                                             <Button
+//                                                 icon={<LikeOutlined />}
+//                                                 size="small"
+//                                                 onClick={() => handleLike(commentIndex)}
+//                                                 type={comment.liked ? 'primary' : 'default'}
+//                                             >
+//                                                 {comment.liked ? '❤️' : '👍'} {comment.likes}
+//                                             </Button>
+//                                             <Button icon={<DislikeOutlined />} size="small" />
+//                                             <Button icon={<CommentOutlined />} size="small" onClick={() => handleReplyClick(commentIndex)}>
+//                                                 Reply
+//                                             </Button>
+//                                         </div>
+//                                         {/* Reply Section */}
+//                                         {visibleReplyIndex === commentIndex && (
+//                                             <>
+//                                                 <TextArea
+//                                                     rows={2}
+//                                                     placeholder="Add a reply..."
+//                                                     value={replyText}
+//                                                     onChange={(e) => setReplyText(e.target.value)}
+//                                                     className='mt-3 mb-2'
+//                                                 />
+//                                                 <Button type="primary" onClick={() => handleAddReply(commentIndex)}>
+//                                                     Add Reply
+//                                                 </Button>
+//                                             </>
+//                                         )}
+//                                         {comment.replies.map((reply, replyIndex) => (
+//                                             <div key={replyIndex} className='mt-2'>
+//                                                 <Avatar src={userProfile} size={30} icon={<UserOutlined />} />
+//                                                 <div>
+//                                                     <h5 className='font-semibold'>
+//                                                         {reply.user} <span className='text-sm text-gray-500'>{reply.time}</span>
+//                                                     </h5>
+//                                                     <p className='my-1'>{reply.text}</p>
+//                                                 </div>
+//                                             </div>
+//                                         ))}
+//                                     </div>
+//                                 </div>
+//                             ))}
+//                         </div>
+//                         <Sider width={400} className='p-1' style={{ backgroundColor: 'white' }} theme="light">
+//                             <Recomended />
+//                         </Sider>
+//                     </div>
+//                 </Content>
+//             </Layout>
+//         </div>
+//     );
+// };
+
+// export default PlayVideo;
